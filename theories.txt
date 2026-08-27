@@ -1,0 +1,11 @@
+1. Creating of documents_id_seq beheind the scene when creating the table documents 
+
+sementic_search=# \d
+              List of relations
+ Schema |       Name       |   Type   | Owner 
+--------+------------------+----------+-------
+ public | documents        | table    | arpit
+ public | documents_id_seq | sequence | arpit
+(2 rows)
+
+documents_id_seq contains the sequnce of ids ... id which is a col in documents table 
