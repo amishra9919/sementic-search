@@ -1,4 +1,7 @@
-1. Creating of documents_id_seq beheind the scene when creating the table documents 
+1. Beheing the scenes on Creating the table.
+
+PostgreSQL creates a sequence behind the scenes and creates documents_id_seq object(not table)
+when we create column using SERIAL .. hre documents_id_seq tells about the next seq as name suggest
 
 sementic_search=# \d
               List of relations
