@@ -12,3 +12,16 @@ sementic_search=# \d
 (2 rows)
 
 documents_id_seq contains the sequnce of ids ... id which is a col in documents table 
+
+2. The VECTOR datatype vs the Other datatype in PostgreSQL
+
+PostgreSQL have 
+INTEGER, TEXT, FLOAT, BOOLEAN, JSONB as datatype 
+
+Vector datatypeis VECTOR
+
+3. Defining the Vector datatype Column vs Other datatype Colunm
+
+content TEXT; --> would tell PostgreSQL tell this column contains text.
+
+embedding vector(384); --> would tell PostgreSQL this column contains a vector with exactly 384 dimensions.

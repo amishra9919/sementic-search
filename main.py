@@ -2,13 +2,16 @@ import psycopg
 
 # Real applications commonly use Python's with context manager so resources are cleaned up automatically
 
+
 with psycopg.connect(
     host="localhost",
     port=5432,
-    user='postgres',
-    password='arpitm11814',
-    dbname='sementic_search',
-) as conn:
+    dbname="sementic_search",
+    user="postgres",
+    password="arpitm11814"
+) as conn :
     with conn.cursor() as cursor:
-        
-        print('connected')
+        print("Connected")
+        cursor.execute("SELECT id, content FROM documents;")
+        result = cursor.fetchall()
+        print("result: ", result)

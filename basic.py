@@ -28,7 +28,7 @@ conn = psycopg.connect(
 #here 'conn' represents the connection Session (channel btwn python and postgres servr)
 
 cursor = conn.cursor() # Cursor as the object use to execute SQL and retrieve results 
-                       # It actually send SQL commands .. [execute SQL and retrieve results mens = obj can exec func]
+                       # It actually send SQL commands .. [execute SQL and retrieve results means = obj can exec func]
 
 
 """
