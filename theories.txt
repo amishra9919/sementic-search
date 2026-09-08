@@ -48,3 +48,10 @@ examples: SELECT '[1,0,0]'::vector <=> '[-1,0,0]'::vector;
             cos(180°) = -1
             cosine similarity = -1
             cosine distance = 1 - cosine similarity (even logically the dist looks like 2 units)
+
+6. Creating embedding column
+
+    ALTER TABLE documents
+    ADD COLUMN embedding vector(384);
+
+    *IMP: here 384 is determined by modal.. modal x generate y numbers so define y valued vector
