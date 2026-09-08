@@ -18,10 +18,33 @@ documents_id_seq contains the sequnce of ids ... id which is a col in documents 
 PostgreSQL have 
 INTEGER, TEXT, FLOAT, BOOLEAN, JSONB as datatype 
 
-Vector datatypeis VECTOR
+Vector datatype is VECTOR
 
 3. Defining the Vector datatype Column vs Other datatype Colunm
 
 content TEXT; --> would tell PostgreSQL tell this column contains text.
 
 embedding vector(384); --> would tell PostgreSQL this column contains a vector with exactly 384 dimensions.
+
+4. Cosine similarity VS Cosine distance 
+
+Cosine similarity              Cosine distance
+
+more similar → closer to 1     more similar → closer to 0 
+
+ptr:
+a. Cosine similarity = 1 - Cosine distance
+b. cos(0) == Cosine similarity     
+
+5. Pgvector's Cosine distance operator (<=>):
+
+compare two vector using cosine similarity in pgvector --> SELECT '[1,0,0]'::vector <=> '[1,0,0]'::vector;
+examples: SELECT '[1,0,0]'::vector <=> '[-1,0,0]'::vector; 
+            think of it           [0,1]
+                                    ↑
+                                    |
+                        [-1,0] ←----+----→ [1,0]
+            The angle is 180°, therefore:
+            cos(180°) = -1
+            cosine similarity = -1
+            cosine distance = 1 - cosine similarity (even logically the dist looks like 2 units)

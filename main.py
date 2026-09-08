@@ -7,7 +7,7 @@ with psycopg.connect(
     host="localhost",
     port=5432,
     dbname="sementic_search",
-    user="postgres",
+    user="arpit",
     password="arpitm11814"
 ) as conn :
     with conn.cursor() as cursor:
