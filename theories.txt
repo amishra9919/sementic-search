@@ -55,3 +55,18 @@ examples: SELECT '[1,0,0]'::vector <=> '[-1,0,0]'::vector;
     ADD COLUMN embedding vector(384);
 
     *IMP: here 384 is determined by modal.. modal x generate y numbers so define y valued vector
+
+
+7. psycopg and vector datatype:
+
+    Python                              PostgreSQL
+---------------------------------------------------------------
+    pgvector Python package             pgvector extension
+        │                                  │
+        │      psycopg connection          │
+        └─────────────────────────────────►│
+                                           │
+                                        vector(384)
+
+- vector is not a built‑in PostgreSQL type like integer or text. 
+- psycopg already understands things like: int, str, float but psycopg doesn’t know about vector by default so it is custom PostgreSQL type 

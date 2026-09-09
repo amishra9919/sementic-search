@@ -59,6 +59,7 @@ print('result', result)
 cursor.close() #for small scripts like this .close() dosnt matter but for long-run app'n it matters
 conn.close()
 
+#==========================================================================================================================
 
 # Real applications commonly use Python's with context manager so resources are cleaned up automatically
 
@@ -74,3 +75,15 @@ with psycopg.connect(
         cursor.execute("SELECT id, content FROM documents;")
         result = cursor.fetchall()
         print("result: ", result)
+
+#==========================================================================================================================
+
+##Creating Embedding 
+from sentence_transformers import SentenceTransformer
+
+model = SentenceTransformer('all-MiniLM-L6-v2')
+text = 'PostgreSQL is a relational database system.'
+
+embedding = model.encode(text)
+
+print("Embedding: ", type(embedding))
