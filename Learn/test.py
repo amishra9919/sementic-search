@@ -1,13 +1,20 @@
 import psycopg
+from sentence_transformers import SentenceTransformer
+from pgvector.psycopg import register_vector
 
+model = SentenceTransformer("all-MiniLM-L6-v2")
 
-with psycopg.connect("dbname=sementic_search user=arpit") as conn:
-    print("Connected")
+query = 'BEST COLORED SHIRT?'
+query_embedding = model.encode(query)
+
+with psycopg.connect('dbname=sementic_search user=postgres password=arpitm11814') as conn:
+    register_vector(conn)
     with conn.cursor() as cursor:
-        # table_data = cursor.execute('SELECT * from documents;')
-        # result = table_data.fetchall()
-        row = cursor.execute("""INSERT INTO documents(content)
-                           VALUES('My self Arpit and i am AI Develooper');""")
-        result = row.fetchall()
-        print("result: ", result)
-    # conn.commit()
+        cursor.execute("""
+                SELECT id, content, embedding<=>%s AS distance from documents
+                WHERE embedding IS NOT NULL
+                ORDER BY embedding<=>%s;
+                """, (query_embedding, query_embedding))
+        result = cursor.fetchall()
+        for doc_id, content, embedding in result:
+            print(doc_id, content, embedding)
