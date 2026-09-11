@@ -70,3 +70,108 @@ examples: SELECT '[1,0,0]'::vector <=> '[-1,0,0]'::vector;
 
 - vector is not a built‑in PostgreSQL type like integer or text. 
 - psycopg already understands things like: int, str, float but psycopg doesn’t know about vector by default so it is custom PostgreSQL type 
+
+8. Creating HNSW index :
+
+a. query
+    CREATE INDEX documents_embedding_hnsw_idx ON documents
+    USING hnsw (embedding vector_cosine_ops);
+
+    USING hnsw --> Use pgvector's HNSW index method.
+    embedding vector_cosine_ops --> means indexing the embedding column for cosine-distance operations.
+
+b. why vector_cosine_ops ?
+    Suppose we have:
+
+    A = [some vector]
+    B = [some vector]
+    C = [some vector]
+    ...
+
+    When HNSW builds its graph, it needs to make decisions like:
+
+    Which vectors are neighbors?
+
+    A should connect to whom?
+    B should connect to whom?
+    C should connect to whom?
+
+    To answer that, it needs a definition of:
+
+    distance(A, B)
+
+    If we selected:
+
+    vector_cosine_ops
+
+    then those neighbor/search decisions use cosine-distance semantics.
+
+c. Other operations for operator index 
+
+(operator class)    Method 
+----------------------------------
+vector_cosine_ops	Cosine
+vector_l2_ops	    Euclidean/L2	
+vector_ip_ops      	Inner product
+
+We're creating an HNSW index on embedding, configured with pgvector's cosine operator class,
+
+8. Does PostgreSQL actually use our HNSW index?
+
+    PostgreSQL's query planner chooses an execution plan based on estimated cost.
+    for small rows like 10 rows it might now use the hnsw index 
+
+    SELECT id, content FROM documents
+    WHERE embedding IS NOT NULL
+    ORDER BY embedding <=> '[...]'
+    LIMIT 5;
+
+    for this query this might fetch result using 2 ways
+        Option A
+
+        Sequential Scan
+        → examine rows
+        → calculate distances
+        → sort
+        → top 5
+
+        Option B
+        HNSW Index Scan
+        → navigate HNSW
+        → obtain nearest candidates
+        → top 5
+
+        Option A may actually be cheaper. Navigating an index has overhead tojust for less no of columns.
+
+        EXPLAIN command -->  check which option how it executed .. 
+
+9.  cursor.execute("""
+            EXPLAIN
+            SELECT id, content FROM documents
+            WHERE embedding IS NOT NULL;
+            """)
+
+    cursor.execute("""
+            SELECT id, content FROM documents
+            WHERE embedding IS NOT NULL;
+            """)
+    results = cursor.fetchall()
+
+        THE SECOND cursor.execute WILL REPLACE THE RESULTS 
+        Note. If added EXPLAIN then it will explain the flow but dont actually update in db
+
+10. keyword search (tsvector) :
+
+        Raw text
+            |
+            v
+        tokenization
+            |
+            v
+        remove stop words
+            |
+            v
+        normalize/stem words
+            |
+            v
+        tsvector

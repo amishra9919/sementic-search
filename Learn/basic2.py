@@ -49,3 +49,22 @@ with psycopg.connect('dbname=sementic_search user=arpit') as conn:
 
 for row in res:
     print(row)
+
+
+#------------------------------------------------------------------------------------------
+#Keyword Search --> inbuild pgvector using text-search vector(tsvector) match this text-search query(tsquery)
+query = 'Windows are simpler than Mac'
+query_embedding = model.encode(query)
+
+with psycopg.connect('dbname=sementic_search user=arpit') as conn:
+    register_vector(conn)
+    with conn.cursor() as cursor: 
+        cursor.execute("""
+            SELECT id, content FROM documents
+            WHERE 
+                to_tsvector('english', content)
+                @@
+                plainto_tsquery('english', %s);""", (query,))
+
+        result = cursor.fetchall()
+        print("resutl: ", result)
