@@ -116,9 +116,13 @@ vector_ip_ops      	Inner product
 
 We're creating an HNSW index on embedding, configured with pgvector's cosine operator class,
 
-8. Does PostgreSQL actually use our HNSW index?
+8. GIN index : GIN index works like INVERTED INDEX 
 
-    PostgreSQL's query planner chooses an execution plan based on estimated cost.
+9. Does PostgreSQL actually use our HNSW index?
+
+    -->PostgreSQL's query planner chooses an execution plan based on estimated cost.
+    -->Uses the HNSW in Vector search 
+
     for small rows like 10 rows it might now use the hnsw index 
 
     SELECT id, content FROM documents
@@ -145,7 +149,7 @@ We're creating an HNSW index on embedding, configured with pgvector's cosine ope
 
         EXPLAIN command -->  check which option how it executed .. 
 
-9.  cursor.execute("""
+10.  cursor.execute("""
             EXPLAIN
             SELECT id, content FROM documents
             WHERE embedding IS NOT NULL;
@@ -160,7 +164,7 @@ We're creating an HNSW index on embedding, configured with pgvector's cosine ope
         THE SECOND cursor.execute WILL REPLACE THE RESULTS 
         Note. If added EXPLAIN then it will explain the flow but dont actually update in db
 
-10. keyword search (tsvector) :
+11. keyword search (tsvector) :
 
         Raw text
             |
