@@ -4,7 +4,7 @@ from sentence_transformers import SentenceTransformer
 
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
-query = "computer learning from examples"
+query = "Machine Learining"
 query_embedding = model.encode(query)
 
 with psycopg.connect('dbname=sementic_search user=arpit') as conn:
