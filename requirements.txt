@@ -1,0 +1,2 @@
+pgvector
+rank-bm25

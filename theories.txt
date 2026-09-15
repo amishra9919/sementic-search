@@ -179,3 +179,159 @@ We're creating an HNSW index on embedding, configured with pgvector's cosine ope
             |
             v
         tsvector
+
+12. ts_rank vs BM25:
+
+    a. ts_rank gives a document proportionally better on repeting words 
+    b. it dosent focus on the importance  
+
+    BM25 essentially thinks:
+
+    database (appears in 800,000 documents) → "Very common word. Not a strong signal."
+
+    PostgreSQL (appears in 100,000 documents) → "More specific. Give it more importance."
+
+    pgvector (appears in 2,000 documents) → "Very rare and specific. Give it even more importance."
+
+    c. ts_rank does not mean PostgreSQL searches only one document.
+
+        Suppose your table has 1,000 documents and the query is:
+
+        "PostgreSQL database"
+
+        First, PostgreSQL full-text search finds all documents that match:
+
+                            QUERY
+                    "PostgreSQL database"
+                            |
+                            ↓
+                    Search whole table
+                            |
+            ┌──────────────┼──────────────┐
+            ↓              ↓              ↓
+        Doc 5          Doc 27         Doc 800
+        MATCH          MATCH           MATCH
+
+        Your WHERE condition does this:
+
+        WHERE to_tsvector('english', content)
+            @@ plainto_tsquery('english', 'PostgreSQL database')
+
+        So yes, it searches across your whole collection (and a GIN index can make finding those matches much faster).
+
+        Then comes ranking.
+
+        Let's say 50 documents matched. PostgreSQL needs to decide:
+
+        Which matching document should be result #1, #2, #3...?
+
+        That's where ts_rank comes in.
+
+13. BM25 v GIN Index
+
+    1. How do I find documents containing a term?
+                    ↓
+                INDEXING
+
+    2. How relevant is each document?
+                    ↓
+                RANKING
+
+    3. In what order should I return them?
+                    ↓
+                SORTING
+
+    A GIN index helps PostgreSQL efficiently locate matching full-text-search entries.
+
+    BM25 is a ranking function.
+
+14. BM25 is corpus-dependent. (MAIN DISTINCTION )
+
+        Suppose our documents are:
+
+        D1: PostgreSQL database indexing
+        D2: PostgreSQL vector database
+        D3: PostgreSQL relational database
+        D4: Dogs and cats
+
+        Across this corpus: PostgreSQL appears frequently.
+
+        But: indexing appears rarely.
+
+        Therefore "indexing" can carry more discriminative information.
+
+        """
+        Now imagine we insert another million documents.
+        The statistics of the corpus change.
+        """
+
+        That's fundamentally different from embeddings.
+
+        An embedding for: "PostgreSQL database indexing" is produced by the embedding model based on that text/model. 
+        It doesn't need to inspect every other document in your database before producing the vector.
+
+RRF CARES ABOUT RANK INSTEAD OF NUMBERS
+higher is better
+
+and the other means:
+
+lower is better
+
+RRF won't directly compare these numbers.
+
+It only cares about:
+
+Rank 1
+Rank 2
+Rank 3
+
+sementic vs gin
+computer learning from examples
+             ≈
+learn patterns from training data
+
+
+Production readiness additionally concerns things like:
+
+                    SEARCH QUALITY
+                         │
+             BM25 + Vector + RRF
+                         │
+                  Cross Encoder
+                         │
+                  Evaluation
+                         │
+             Recall@K / MRR / NDCG
+
+
+                    PERFORMANCE
+                         │
+                    HNSW index
+                         │
+                 BM25 indexing
+                         │
+                 Query latency
+                         │
+                Load/concurrency
+
+
+                    APPLICATION
+                         │
+                       API
+                         │
+                Connection pooling
+                         │
+                  Batch ingestion
+                         │
+                  Error handling
+
+
+                    OPERATIONS
+                         │
+                  Configuration
+                         │
+                      Logs
+                         │
+                   Monitoring
+                         │
+                 Schema migrations
