@@ -1,18 +1,27 @@
 import psycopg
 from rank_bm25 import BM25Okapi
 
-def bm25_search(rows, top_k = 5):
+def lexical_search(query, top_k=5):
+
+    with psycopg.connect('dbname=sementic_search user=arpit') as conn:
+        with conn.cursor() as cursor:
+
+            cursor.execute("""
+                SELECT id, content FROM documents;""")
+            rows = cursor.fetchall()
+
+            # result = lexical_search(rows, query)
+            # print(result)
+
+    documents = []
     document_ids = []
-    document = []
-
     for id, content in rows:
+        documents.append(content)
         document_ids.append(id)
-        document.append(content)
 
-    tokenized_docs = [doc.lower().split() for doc in document]
+    tokenized_documents=[doc.lower().split() for doc in documents]
 
-    bm25 = BM25Okapi(tokenized_docs)
-
+    bm25 = BM25Okapi(tokenized_documents)
     """
         Documents
             ↓
@@ -20,35 +29,32 @@ def bm25_search(rows, top_k = 5):
             ↓
         BM25 index
     """
-
-    query = 'Machine Learining'
-    tokenized_query = query.lower().split()
-
+    tokenized_query=query.lower().split()
+    
     scores = bm25.get_scores(tokenized_query)
 
-    # def ret(the_tuple):
-    #     return the_tuple[2]
+    results = []
+    for itr, content in enumerate(documents):
+        results.append({
+            'id': document_ids[itr],
+            'content': documents[itr],
+            'score': float(scores[itr]),
+        })
 
-    rank = sorted(
-        zip(document_ids, document, scores),
-        key=lambda x: x[2],
-        # key=ret, #only if ret is defined (just for understanding)
+        """    
+        OR 
+
+        for doc_id, content, score in zip(document_ids,documents,scores):
+            results.append({
+                "id": doc_id,
+                "content": content,
+                "score": float(score)
+            })
+        """
+
+    results.sort(
+        key=lambda x:x['score'],
         reverse=True
     )
-    top_krows = rank[:top_k]
 
-    return top_krows
-
-with psycopg.connect("dbname=sementic_search user=arpit") as conn:
-    with conn.cursor() as cur:
-        cur.execute("""
-            SELECT id, content FROM documents
-            ORDER by id;""")
-
-        rows = cur.fetchall()
-
-    top_k = bm25_search(rows, 5)
-
-    for doc_id, content, score in top_k:
-        print(doc_id, content, score)
-    # print("document: ", rank)
+    return results[:top_k]
