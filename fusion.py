@@ -1,6 +1,6 @@
-def reciprocal_rank_fusion(bm_results, vector_search):
+def reciprocal_rank_fusion(bm_results, vector_search, k=60, top_k=5):
     scores = {}
-    k = 60
+    documents = {}
 
     for rank, result in enumerate(bm_results, start=1):
         scores[result['id']] = scores.get(result['id'], 0)
@@ -9,10 +9,12 @@ def reciprocal_rank_fusion(bm_results, vector_search):
             rrf_scores[doc_id] = 0
         """
         scores[result['id']] += 1/(k+rank)
+        documents[result['id']] = result['content']
 
     for rank, result in enumerate(vector_search, start=1):
         scores[result['id']] = scores.get(result['id'], 0)
         scores[result['id']] += 1/(k+rank)
+        documents[result['id']] = result['content']
 
     ranked = sorted(
         scores.items(),
@@ -20,5 +22,14 @@ def reciprocal_rank_fusion(bm_results, vector_search):
         reverse=True
     )
 
-    return ranked
+    result = []
+
+    for doc_id, scores in ranked[:top_k]:
+        result.append({
+            'id': doc_id,
+            'content': documents[doc_id],
+            'rrf_score': scores
+        })
+
+    return result
 

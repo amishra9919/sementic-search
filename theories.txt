@@ -270,20 +270,50 @@ We're creating an HNSW index on embedding, configured with pgvector's cosine ope
         An embedding for: "PostgreSQL database indexing" is produced by the embedding model based on that text/model. 
         It doesn't need to inspect every other document in your database before producing the vector.
 
-RRF CARES ABOUT RANK INSTEAD OF NUMBERS
-higher is better
+15. RRF 
+    RRF CARES ABOUT RANK INSTEAD OF NUMBERS
+    higher is better
 
-and the other means:
+    and the other means:
 
-lower is better
+    lower is better
 
-RRF won't directly compare these numbers.
+    RRF won't directly compare these numbers.
 
-It only cares about:
+    It only cares about:
 
-Rank 1
-Rank 2
-Rank 3
+    Rank 1
+    Rank 2
+    Rank 3
+
+16. Cross encoder Reranking or Retrieval algorithm:
+    cross-encoder is Reranking algorithm rest vector search, bm25 are retrieval algorithm
+
+17. Where ever you see the np array .. remember to convert into float
+18. Cross Encoder needConsider two candidate documents:
+
+    Query:
+    "Windows are simpler than Mac"
+
+    Candidate A:
+
+    "Windows computers are generally easier to configure than Apple computers."
+
+    Candidate B:
+    "Windows and Mac are popular operating systems."
+
+    Vector search might put both reasonably close.
+
+    BM25 might strongly like B because it contains exact terms: Windows, Mac
+
+    RRF combines those signals.
+
+    But none of those stages deeply evaluates:
+
+    How relevant is this complete document to this complete query when considered together??
+
+19. Why cross-encoder is done at at user quer time and bi-encode is done before? 
+    cuz bi-encoder is computed once and stored in db but can do same with cross encoder as we need to fuse query and doc together
 
 sementic vs gin
 computer learning from examples

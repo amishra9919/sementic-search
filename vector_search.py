@@ -3,7 +3,7 @@ from sentence_transformers import SentenceTransformer
 from pgvector.psycopg import register_vector
 
 modal = SentenceTransformer('all-MiniLM-L6-v2')
-
+##BI-ENCODER ,, have separate encoder
 def vector_search(query, top_k=5):
     query_embedding = modal.encode(query)
     result = []
