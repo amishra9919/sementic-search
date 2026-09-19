@@ -4,7 +4,9 @@ from sentence_transformers import SentenceTransformer
 
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
-with psycopg.connect('dbname=sementic_search user=arpit') as conn:
+#Right now it ingest the embeddings of content in the rows
+
+with psycopg.connect('dbname=sementic_search user=postgres password=arpitm11814') as conn:
     register_vector(conn)
     with conn.cursor() as cursor:
         cursor.execute("""
@@ -19,5 +21,6 @@ with psycopg.connect('dbname=sementic_search user=arpit') as conn:
                     SET embedding = %s
                     WHERE id = %s;
                     """, (embedding, doc_id))
-        print("Embeddings added")
+        print(f"Embedded document res")
+
 

@@ -1,7 +1,11 @@
-1. Beheing the scenes on Creating the table.
+1. Beheind the scenes on Creating the table.
 
-PostgreSQL creates a sequence behind the scenes and creates documents_id_seq object(not table)
-when we create column using SERIAL .. hre documents_id_seq tells about the next seq as name suggest
+A B-tree (Balanced Tree) is the default index structure used by most SQL databases
+ (such as PostgreSQL, MySQL InnoDB, SQLite, and SQL Server) 
+ to make data retrieval much faster.
+
+Think of it as a sorted, balanced tree that allows the database to 
+quickly locate rows without scanning the entire table.
 
 sementic_search=# \d
               List of relations
@@ -11,7 +15,6 @@ sementic_search=# \d
  public | documents_id_seq | sequence | arpit
 (2 rows)
 
-documents_id_seq contains the sequnce of ids ... id which is a col in documents table 
 
 2. The VECTOR datatype vs the Other datatype in PostgreSQL
 
@@ -80,7 +83,11 @@ a. query
     USING hnsw --> Use pgvector's HNSW index method.
     embedding vector_cosine_ops --> means indexing the embedding column for cosine-distance operations.
 
-b. why vector_cosine_ops ?
+=> this will be used whenever we'll do vector search
+
+b. why vector_cosine_ops ? ==> to use same metrix 
+PostgreSQL generally cannot use that HNSW index for the cosine-distance query if hnsw is creating another method 
+
     Suppose we have:
 
     A = [some vector]
@@ -117,6 +124,9 @@ vector_ip_ops      	Inner product
 We're creating an HNSW index on embedding, configured with pgvector's cosine operator class,
 
 8. GIN index : GIN index works like INVERTED INDEX 
+
+CREATE INDEX document_search_vector_idx ON documents
+USING GIN (search_vector);
 
 9. Does PostgreSQL actually use our HNSW index?
 
@@ -215,7 +225,7 @@ We're creating an HNSW index on embedding, configured with pgvector's cosine ope
         Your WHERE condition does this:
 
         WHERE to_tsvector('english', content)
-            @@ plainto_tsquery('english', 'PostgreSQL database')
+            @@ plainto_tsquery('english', 'PostgreSQL database')  #GIN index used here
 
         So yes, it searches across your whole collection (and a GIN index can make finding those matches much faster).
 
