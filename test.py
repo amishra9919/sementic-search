@@ -1,19 +1,19 @@
-<<<<<<< Updated upstream
-=======
 import psycopg
-from sentence_transformers import SentenceTransformer
 from pgvector.psycopg import register_vector
+from sentence_transformers import SentenceTransformer
 
-def vector_search():
-    with psycopg.connect('dbname=sementic_search user=postgres password=arpitm11814') as conn:
-        register_vector(conn)
-        with conn.cursor() as cursor:
+modal = SentenceTransformer('all-MiniLM-L6-v2')
+query = 'Postgr SL akdhsfklaudg'
+query_embedding = modal.encode(query)
 
-            cursor.execute("""
-                SELECT id, content, embedding IS NOT NULL AS has_embedding FROM documents;""")
-            result = cursor.fetchall()
+with psycopg.connect('dbname=sementic_search user=postgres password=arpitm11814') as conn:
+    register_vector(conn)
+    with conn.cursor() as cursor:
+        cursor.execute("""
+            SELECT id, content, embedding<=>%s as distance FROM documents
+            WHERE embedding IS NOT NULL
+            ORDER BY distance;""", (query_embedding, ))
+        rows = cursor.fetchall()
 
-            print(result)
+        print(rows)
 
-vector_search()
->>>>>>> Stashed changes

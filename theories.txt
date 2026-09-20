@@ -325,6 +325,34 @@ USING GIN (search_vector);
 19. Why cross-encoder is done at at user quer time and bi-encode is done before? 
     cuz bi-encoder is computed once and stored in db but can do same with cross encoder as we need to fuse query and doc together
 
+20. Why Not Skip RRF? 
+    IF WE SKIP RRF ? 
+        a. cross encoder modal is costly for large candidates
+        b. latency will increase
+        c. if skip some candidates there will be accuracy issue as some potential candidates might be missed
+    
+21. Why Chunking is Required? 
+    a. large corpous dataset is encoded into single vector .. which dont carry all the information
+    b. also there's input token limit on the embedding model as we cannot pass the arbitary entire doc into embedding model
+
+22. Why not more chunk overlap like 80%
+    more chunks
+        ↓
+    more embeddings
+        ↓
+    more embedding computation
+        ↓
+    larger database
+        ↓
+    larger HNSW index
+        ↓
+    more retrieval candidates
+        ↓
+    more duplicate search results
+    
+23. idempotent ingestion
+Remaining a. CHUNKING b. Lexical search (importing all rows) c. parade db 
+
 sementic vs gin
 computer learning from examples
              ≈

@@ -24,12 +24,11 @@ def hybrid_search(query,
         fusion_k
     )
 
-    final_results = rerank(
+    final_results = rerank(         #cross-encoder
         query,
         fused_results,
         top_k=final_k
     )
-    print("fusion results")
     print(final_results)
 
 query = 'computer learning from examples'
