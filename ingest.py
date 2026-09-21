@@ -1,26 +1,47 @@
 import psycopg
 from pgvector.psycopg import register_vector
 from sentence_transformers import SentenceTransformer
+from chunking import chunk_text
 
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
-#Right now it ingest the embeddings of content in the rows
 
-with psycopg.connect('dbname=sementic_search user=postgres password=arpitm11814') as conn:
-    register_vector(conn)
-    with conn.cursor() as cursor:
-        cursor.execute("""
-                    SELECT id, content FROM documents 
-                    WHERE embedding IS NULL;""")
-        res = cursor.fetchall()
+with open('data/sample_document.txt', 'r', encoding="utf-8") as file:
+    text = file.read()
 
-        for doc_id, content in res:
-            embedding = model.encode(content)
-            cursor.execute("""
-                    UPDATE documents
-                    SET embedding = %s
-                    WHERE id = %s;
-                    """, (embedding, doc_id))
-        print(f"Embedded document res")
+    chunks = chunk_text(text, chunk_size=100, overlap=20)
+
+############################################################################################
+
+#     with  psycopg.connect('dbname=sementic_search user=arpit') as conn:
+#         register_vector(conn)
+#         with conn.cursor() as cursor:
+#             cursor.execute("""
+#                 INSERT INTO documents(title, source)
+#                 VALUES(%s, %s)
+#                 RETURNING id;""",('PostgreSQL Search Guide', 'sample_document.txt'))
+#             document_id = cursor.fetchone()[0]
+# print(document_id)
+    
+############################################################################################
+
+# #Right now it ingest the embeddings of content in the rows
+
+# with psycopg.connect('dbname=sementic_search user=postgres password=arpitm11814') as conn:
+#     register_vector(conn)
+#     with conn.cursor() as cursor:
+#         cursor.execute("""
+#                     SELECT id, content FROM documents 
+#                     WHERE embedding IS NULL;""")
+#         res = cursor.fetchall()
+
+#         for doc_id, content in res:
+#             embedding = model.encode(content)
+#             cursor.execute("""
+#                     UPDATE documents
+#                     SET embedding = %s
+#                     WHERE id = %s;
+#                     """, (embedding, doc_id))
+#         print(f"Embedded document res")
 
 

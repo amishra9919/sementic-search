@@ -1,0 +1,32 @@
+PostgreSQL is an open source relational database management system.
+It supports SQL, transactions, indexes, constraints, and many advanced
+database capabilities.
+
+PostgreSQL supports full text search for searching textual information.
+Documents can be transformed into searchable representations and indexes
+can improve the performance of lexical search.
+
+pgvector is a PostgreSQL extension that adds support for storing and
+searching vector embeddings. Embeddings represent semantic information
+as numerical vectors.
+
+Vector similarity search can compare a query embedding with document
+embeddings. Cosine distance is commonly used when comparing semantic
+embeddings.
+
+When the number of vectors becomes large, scanning every vector can
+become expensive. HNSW is an approximate nearest-neighbor indexing
+technique that can make vector retrieval significantly faster.
+
+Lexical and semantic retrieval solve different problems. Lexical search
+is useful when exact words, identifiers, names, or error codes matter,
+while vector search can retrieve semantically related content even when
+the exact query words are absent.
+
+A hybrid search system can retrieve candidates using both lexical and
+vector retrieval. Reciprocal Rank Fusion can combine the ranked lists
+without directly comparing their incompatible raw scores.
+
+After candidate retrieval, a cross encoder can rerank a smaller number
+of candidates. The cross encoder processes the query and candidate text
+together and produces a relevance score.

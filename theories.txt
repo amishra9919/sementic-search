@@ -351,7 +351,7 @@ USING GIN (search_vector);
     more duplicate search results
     
 23. idempotent ingestion
-Remaining a. CHUNKING b. Lexical search (importing all rows) c. parade db 
+Remaining a. CHUNKING b. Lexical search (importing all rows) c. parade db (bm25)
 
 sementic vs gin
 computer learning from examples

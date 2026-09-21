@@ -48,7 +48,7 @@ def lexical_search(query, top_k=5):
             results.append({
                 "id": doc_id,
                 "content": content,
-                "score": float(score)
+                "score": score
             })
         """
 
