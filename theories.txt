@@ -74,7 +74,9 @@ examples: SELECT '[1,0,0]'::vector <=> '[-1,0,0]'::vector;
 - vector is not a built‑in PostgreSQL type like integer or text. 
 - psycopg already understands things like: int, str, float but psycopg doesn’t know about vector by default so it is custom PostgreSQL type 
 
-8. Creating HNSW index :
+8. INDEX (HNSW v ivfflat):
+
+Creating HNSW index :
 
 a. query
     CREATE INDEX documents_embedding_hnsw_idx ON documents
@@ -83,7 +85,7 @@ a. query
     USING hnsw --> Use pgvector's HNSW index method.
     embedding vector_cosine_ops --> means indexing the embedding column for cosine-distance operations.
 
-=> this will be used whenever we'll do vector search
+    HERE WHAT IS DONE IS WE INDEX THE EMBEDDING COLUMN
 
 b. why vector_cosine_ops ? ==> to use same metrix 
 PostgreSQL generally cannot use that HNSW index for the cosine-distance query if hnsw is creating another method 
@@ -115,13 +117,30 @@ PostgreSQL generally cannot use that HNSW index for the cosine-distance query if
 
 c. Other operations for operator index 
 
-(operator class)    Method 
-----------------------------------
-vector_cosine_ops	Cosine
-vector_l2_ops	    Euclidean/L2	
-vector_ip_ops      	Inner product
+    (operator class)    Method 
+    ----------------------------------
+    vector_cosine_ops	Cosine
+    vector_l2_ops	    Euclidean/L2	
+    vector_ip_ops      	Inner product
 
-We're creating an HNSW index on embedding, configured with pgvector's cosine operator class,
+    We're creating an HNSW index on embedding, configured with pgvector's cosine operator class,
+    => this will be used whenever we'll do vector search
+
+IVFFlat: IVFFlat organizes vectors into groups. 
+         When a query comes in, PostgreSQL can search selected groups instead of comparing against every vector.
+
+    CREATE INDEX chunks_embedding_ivfflat_idx
+    ON chunks
+    USING ivfflat (embedding vector_cosine_ops)
+    WITH (lists = 100);
+
+        Vector indexes
+    ├── HNSW       ← Very Fast, More memory + slower build, index the vector
+    └── IVFFlat    ← Lighter/easier as it creates indexes on groups vector into cluster
+
+    Text-search indexes
+    └── GIN        ← separate; useful for PostgreSQL full-text search
+
 
 8. GIN index : GIN index works like INVERTED INDEX 
 
@@ -350,8 +369,34 @@ USING GIN (search_vector);
         ↓
     more duplicate search results
     
-23. idempotent ingestion
+23. CREATE NEW TABLE AND ITS CHILD CHUNK TABLE
+    a. PARENT TABLE
+        CREATE TABLE documents (
+            id BIGSERIAL PRIMARY KEY,
+            title TEXT,
+            source TEXT,
+            created_at TIMESTAMPTZ DEFAULT NOW()
+        );
+    b. CHUNK TABLE  
+        CREATE TABLE chunks (
+            id BIGSERIAL PRIMARY KEY,
+
+            document_id BIGINT NOT NULL
+                REFERENCES documents(id)
+                ON DELETE CASCADE,
+
+            chunk_index INTEGER NOT NULL,
+
+            content TEXT NOT NULL,
+
+            embedding VECTOR(384),
+
+            UNIQUE(document_id, chunk_index)
+        );
+
+
 Remaining a. CHUNKING b. Lexical search (importing all rows) c. parade db (bm25)
+
 
 sementic vs gin
 computer learning from examples

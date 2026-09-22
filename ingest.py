@@ -5,27 +5,33 @@ from chunking import chunk_text
 
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
-
 with open('data/sample_document.txt', 'r', encoding="utf-8") as file:
     text = file.read()
 
     chunks = chunk_text(text, chunk_size=100, overlap=20)
+    embedding = model.encode(chunks, batch_size=32)
 
-############################################################################################
+    with psycopg.connect('dbname=sementic_search user=arpit') as conn:
+        register_vector(conn)
+        with conn.cursor() as cursor:
+            cursor.execute("""
+                INSERT INTO documents(title, source)
+                VALUES(%s, %s)
+                RETURNING id;""", ('PostgreSQL Search Guide', 'sample_document.txt'))
+            document_id = cursor.fetchone()[0]
 
-#     with  psycopg.connect('dbname=sementic_search user=arpit') as conn:
-#         register_vector(conn)
-#         with conn.cursor() as cursor:
-#             cursor.execute("""
-#                 INSERT INTO documents(title, source)
-#                 VALUES(%s, %s)
-#                 RETURNING id;""",('PostgreSQL Search Guide', 'sample_document.txt'))
-#             document_id = cursor.fetchone()[0]
-# print(document_id)
+            for chunk_index, (chunks, embedding) in enumerate(zip(chunks, embedding)):
+                cursor.execute("""
+                    INSERT INTO chunks(document_id, chunk_index, embedding, content)
+                    VALUES (%s, %s, %s, %s);""", (document_id, chunk_index, embedding, chunks))
+    print(f"INSERTED INTO DOCUMENT {document_id} "
+            f"WITH {len(chunks)} chunks")
+
+
     
 ############################################################################################
 
-# #Right now it ingest the embeddings of content in the rows
+# #Right now it ingest the embeddings of content in the rows BELOW
 
 # with psycopg.connect('dbname=sementic_search user=postgres password=arpitm11814') as conn:
 #     register_vector(conn)
