@@ -394,6 +394,14 @@ USING GIN (search_vector);
             UNIQUE(document_id, chunk_index)
         );
 
+24. IDEMPOTENT:
+    1. create a content_hash col.. this will be for python to check if hash exist then dont do ingestion or whatever simple.
+        ALTER TABLE documents
+        ADD COLUMN content_hash TEXT;
+    2.  somehow if missed in python ... so still the documents_content_hash_idx will prevent the ingestion as it creates b-tree for content_hash col should be unique
+        and if two workers simultaneously receive the same document so in that case also db side checking is also needed
+        CREATE UNIQUE INDEX documents_content_hash_idx
+        ON documents(content_hash);
 
 Remaining a. CHUNKING b. Lexical search (importing all rows) c. parade db (bm25)
 
@@ -448,3 +456,16 @@ Production readiness additionally concerns things like:
                    Monitoring
                          │
                  Schema migrations
+
+
+
+############################################################
+#TODO IN HOME LAPTOP 
+
+ALTER TABLE documents
+ADD COLUMN content_hash TEXT;
+
+
+CREATE UNIQUE INDEX documents_content_hash_idx
+ON documents(content_hash);
+

@@ -7,17 +7,20 @@ def lexical_search(query, top_k=5):
         with conn.cursor() as cursor:
 
             cursor.execute("""
-                SELECT id, content FROM documents;""")
+                SELECT id, document_id, content FROM chunks;""")
             rows = cursor.fetchall()
 
-            # result = lexical_search(rows, query)
-            # print(result)
+            # cursor.execute("""
+            #     SELECT id, content FROM documents;""")
+            # rows = cursor.fetchall()
 
+    chunk_ids = []
     documents = []
     document_ids = []
-    for id, content in rows:
+    for id, document_id, content in rows:
+        chunk_ids.append(id)
         documents.append(content)
-        document_ids.append(id)
+        document_ids.append(document_id)
 
     tokenized_documents=[doc.lower().split() for doc in documents]
 
@@ -34,21 +37,23 @@ def lexical_search(query, top_k=5):
     scores = bm25.get_scores(tokenized_query)
 
     results = []
-    for itr, content in enumerate(documents):
+
+    for chunk_id, document_id, content, score in zip(chunk_ids,document_ids,documents,scores):
         results.append({
-            'id': document_ids[itr],
-            'content': documents[itr],
-            'score': float(scores[itr]),
+            "id": chunk_id,
+            "document_id": document_id,
+            "content": content,
+            "score": float(score)
         })
 
         """    
         OR 
 
-        for doc_id, content, score in zip(document_ids,documents,scores):
+        for itr, content in enumerate(documents):
             results.append({
-                "id": doc_id,
-                "content": content,
-                "score": score
+                'id': document_ids[itr],
+                'content': documents[itr],
+                'score': float(scores[itr]),
             })
         """
 

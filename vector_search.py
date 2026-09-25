@@ -23,9 +23,9 @@ def vector_search(query, top_k=5):
                     'id': chunk_id,
                     'document_id': document_id,
                     'content': content,
-                    'distance' : distance
+                    'score' : score
                 } 
-                for chunk_id, document_id, content, distance in rows
+                for chunk_id, document_id, content, score in rows
             ]
 
             # for chunk_id, document_id, content, distance in rows:
@@ -44,5 +44,3 @@ def vector_search(query, top_k=5):
             #         'score' : score
             #     })
             
-
-print(vector_search('How can I combine keyword and semantic search?'))
