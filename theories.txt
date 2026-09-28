@@ -403,6 +403,48 @@ USING GIN (search_vector);
         CREATE UNIQUE INDEX documents_content_hash_idx
         ON documents(content_hash);
 
+25. PARADE db => ParadeDB is a company/open-source project building search capabilities around PostgreSQL. 
+    it has pg_search extension made by PARADE db which provides "paradedb" index access method 
+
+26. WORKFLOW of LEXICAL SEARCH 
+    --- similar to vector search like How HNSW INDEXING works with VECTOR SEARCH
+    --- here the ParadeDB index with BM25
+    --- And pg_search 0.25.10 explicitly provides BM25 full-text search within PostgreSQL rather than requiring a second external search system.
+
+    SELECT id, content, pdb.score(id) AS bm25_score FROM bm25_test
+    WHERE content ||| 'PostgreSQL HNSW'
+    ORDER BY bm25_score DESC;
+
+
+####################################################################################
+1. Docker Implementation
+        
+    =>  Docker image
+            ↓
+        blueprint containing PostgreSQL + extensions
+
+        Docker container
+            ↓
+        running database instance created from image
+
+    => This means we'll dockerize the postgres ... not the code 
+
+2. CREATE db CONTAINER
+
+docker run -d \
+  --name semantic-search-db \                           //container name
+  -e POSTGRES_USER=postgres \                           //env var
+  -e POSTGRES_PASSWORD=postgres \                       //env var
+  -e POSTGRES_DB=sementic_search \                      //env var
+  -p 5433:5432 \                                        //Port mapping, -p HOST_PORT:CONTAINER_PORT, Your PostgreSQL server is listening on port 5432 But machine will accesses it through 5433
+  -v semantic_search_data:/var/lib/postgresql/data \    //Volume, -v VOLUME_NAME:CONTAINER_PATH, semantic_search_data:/var/lib/postgresql
+  paradedb/paradedb:latest
+
+3. once created the container ... inside the db_name=# section there is pg_extension table in which there's extension details are there 
+
+
+
+
 Remaining a. CHUNKING b. Lexical search (importing all rows) c. parade db (bm25)
 
 
@@ -462,10 +504,62 @@ Production readiness additionally concerns things like:
 ############################################################
 #TODO IN HOME LAPTOP 
 
-ALTER TABLE documents
-ADD COLUMN content_hash TEXT;
+in docker learning paste thsi for port mapping
+So:
+Your Windows
+localhost:5433
+       │
+       │ Docker forwards traffic
+       ▼
+Container
+port 5432
+       │
+       ▼
+PostgreSQL
+
+Therefore, from Python running directly on your Windows machine, you would connect using something like:
+psycopg.connect(    "host=localhost port=5433 dbname=sementic_search user=postgres password=postgres")
 
 
-CREATE UNIQUE INDEX documents_content_hash_idx
-ON documents(content_hash);
+-v volume :
+-v source:destination
+without volume if container deleted then the storage deleted .. so we give the storage for db in docker env
 
+Imagine you don't use a volume:
+Container
+│
+└── PostgreSQL data
+      ├── tables
+      ├── indexes
+      └── database files
+
+Then you delete the container:
+docker rm semantic-search-db
+
+The container's filesystem gets deleted with it.
+
+create image 
+:
+paradedb/paradedb:=>image name
+Tags identify image variants/versions.
+For example, conceptually an image repository might contain:
+paradedb/paradedb:latest
+paradedb/paradedb:1.0
+paradedb/paradedb:1.1
+
+#------------------------
+EXECution
+
+'docker volume ls' ==> delete everyting inside this 
+then execute ' docker run -d --name sementic-search-db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=sementic_search -p 5433:5432 -v sementic_search_data:/var/lib/postgresql paradedb/paradedb:latest '
+
+=>create extension
+CREATE INDEX bm25_test_search_idx
+ON bm25_test
+USING paradedb (
+    id,
+    content
+)
+WITH (
+    key_field = 'id'
+);
