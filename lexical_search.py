@@ -33,7 +33,6 @@ def lexical_search(query, top_k=50):
                 for chunk_id, document_id, content, score in result
             ]
             
-
 #########################################################################################################
 # from rank_bm25 import BM25Okapi
 

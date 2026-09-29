@@ -375,6 +375,7 @@ USING GIN (search_vector);
             id BIGSERIAL PRIMARY KEY,
             title TEXT,
             source TEXT,
+            content_hash TEXT UNIQUE,
             created_at TIMESTAMPTZ DEFAULT NOW()
         );
     b. CHUNK TABLE  
@@ -454,7 +455,7 @@ docker run -d \
   -e POSTGRES_PASSWORD=postgres \                       //env var
   -e POSTGRES_DB=sementic_search \                      //env var
   -p 5433:5432 \                                        //Port mapping, -p HOST_PORT:CONTAINER_PORT, Your PostgreSQL server is listening on port 5432 But machine will accesses it through 5433
-  -v semantic_search_data:/var/lib/postgresql/data \    //Volume, -v VOLUME_NAME:CONTAINER_PATH, semantic_search_data:/var/lib/postgresql
+  -v semantic_search_data:/var/lib/postgresql \    //Volume, -v VOLUME_NAME:CONTAINER_PATH, semantic_search_data:/var/lib/postgresql
   paradedb/paradedb:latest
 
 3. once created the container ... inside the db_name=# section there is pg_extension table in which there's extension details are there 
@@ -463,11 +464,13 @@ docker run -d \
     docker exec -it sementic-search-db bash --> then inside bash execute --> psql -U postgres -d sementic_search   OR
     docker exec -it sementic-search-db psql -U postgres -d sementic_search
 
-CREATE EXTENSION IF NOT EXISTS vector;
-CREATE EXTENSION IF NOT EXISTS pg_search CASCADE;
+5. check with \dx and 
+
+    CREATE EXTENSION IF NOT EXISTS vector;
+    CREATE EXTENSION IF NOT EXISTS pg_search CASCADE;
 #-------------------------------------------------------------------------------------------------------------
 
-
+todo: 1.register_vector(conn) borrows conn each time 2. concurrecncy in lex search and vector search 
 
 sementic vs gin
 computer learning from examples
@@ -522,7 +525,7 @@ Production readiness additionally concerns things like:
 
 
 
-############################################################
+##############################################################################################################################
 
 
 #------------------------
