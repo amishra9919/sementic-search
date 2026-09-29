@@ -13,10 +13,12 @@ WITH (
 """
 
 
-from database import pool
+import psycopg
+
+DB_CONNECTION = ('host=localhost port=5433 dbname=sementic_search user=postgres password=postgres')
 
 def lexical_search(query, top_k=50):
-    with pool.connection() as conn:
+    with psycopg.connect(DB_CONNECTION) as conn:
         with conn.cursor() as cursor:
             cursor.execute("""
                 SELECT id, document_id, content, pdb.score(id) AS bm25_score FROM chunks
@@ -33,7 +35,7 @@ def lexical_search(query, top_k=50):
                 for chunk_id, document_id, content, score in result
             ]
             
-print(lexical_search('vector search', 3))
+
 #########################################################################################################
 # from rank_bm25 import BM25Okapi
 

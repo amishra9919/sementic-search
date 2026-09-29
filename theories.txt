@@ -403,6 +403,9 @@ USING GIN (search_vector);
         CREATE UNIQUE INDEX documents_content_hash_idx
         ON documents(content_hash);
 
+    3. OR ELSE instead of creating the column 'content_hash' then creating the UNIQUE INDEX we can directly 
+        ADD COLUMN content_hash TEXT UNIQUE; --> here it create b-tree index 
+
 25. PARADE db => ParadeDB is a company/open-source project building search capabilities around PostgreSQL. 
     it has pg_search extension made by PARADE db which provides "paradedb" index access method 
 
@@ -415,6 +418,20 @@ USING GIN (search_vector);
     WHERE content ||| 'PostgreSQL HNSW'
     ORDER BY bm25_score DESC;
 
+27. CONNECTION POOLING:
+    hybrid_search()
+    │
+    ├── bm25_search()
+    │      └── open PostgreSQL connection
+    │          query
+    │          close connection
+    │
+    └── vector_search()
+        └── open PostgreSQL connection
+            query
+            close connection
+    --here user query is creating two new db connection for a single query
+    --here PostgreSQL connection is opening and closing again and again which take resource to open a postgre connection
 
 ####################################################################################
 1. Docker Implementation
@@ -442,10 +459,14 @@ docker run -d \
 
 3. once created the container ... inside the db_name=# section there is pg_extension table in which there's extension details are there 
 
+4. if the db_name is not showing on 'docker ps' here sementic-search-db then in that case have to execute it again 
+    docker exec -it sementic-search-db bash --> then inside bash execute --> psql -U postgres -d sementic_search   OR
+    docker exec -it sementic-search-db psql -U postgres -d sementic_search
 
+CREATE EXTENSION IF NOT EXISTS vector;
+CREATE EXTENSION IF NOT EXISTS pg_search CASCADE;
+#-------------------------------------------------------------------------------------------------------------
 
-
-Remaining a. CHUNKING b. Lexical search (importing all rows) c. parade db (bm25)
 
 
 sementic vs gin
