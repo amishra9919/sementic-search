@@ -8,14 +8,14 @@ USING hnsw (embedding vector_cosine_ops);
 import psycopg
 from sentence_transformers import SentenceTransformer
 from pgvector.psycopg import register_vector
+from database import pool
 
-DB_CONNECTION = ('host=localhost port=5433 dbname=sementic_search user=postgres password=postgres')
 modal = SentenceTransformer('all-MiniLM-L6-v2')
 ##BI-ENCODER ,, have separate encoder
 def vector_search(query, top_k=5):
     query_embedding = modal.encode(query)
     result = []
-    with psycopg.connect(DB_CONNECTION) as conn:
+    with pool.connection() as conn:
         register_vector(conn)
         with conn.cursor() as cursor:
             cursor.execute("""
@@ -35,7 +35,7 @@ def vector_search(query, top_k=5):
                 } 
                 for chunk_id, document_id, content, score in rows
             ]
-        
+print(vector_search('vector search', 3))
             # for chunk_id, document_id, content, distance in rows:
             #     result.append({
             #         'id': chunk_id,
