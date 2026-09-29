@@ -7,7 +7,7 @@ modal = SentenceTransformer('all-MiniLM-L6-v2')
 def vector_search(query, top_k=5):
     query_embedding = modal.encode(query)
     result = []
-    with psycopg.connect('dbname=sementic_search user=arpit') as conn:
+    with psycopg.connect('dbname=sementic_search user=postgres password=arpitm11814') as conn:
         register_vector(conn)
         with conn.cursor() as cursor:
             cursor.execute("""
@@ -35,6 +35,22 @@ def vector_search(query, top_k=5):
             #         'content': content,
             #         'distance' : distance
             #     })
+
+####################################################################################################
+            cursor.execute("""
+                SELECT id, content, embedding<=>%s AS distance FROM documents
+                WHERE embedding IS NOT NULL
+                ORDER BY distance
+                LIMIT %s;""", (query_embedding, top_k))
+
+            rows = cursor.fetchall()
+
+            for doc_id, content, score in rows:
+                result.append({
+                    'id': doc_id,
+                    'content': content,
+                    'score' : score
+                })
 
 
             # for doc_id, content, score in rows:

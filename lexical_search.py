@@ -3,7 +3,7 @@ from rank_bm25 import BM25Okapi
 
 def lexical_search(query, top_k=5):
 
-    with psycopg.connect('dbname=sementic_search user=arpit') as conn:
+    with psycopg.connect('dbname=sementic_search user=postgres password=arpitm11814') as conn:
         with conn.cursor() as cursor:
 
             cursor.execute("""

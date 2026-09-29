@@ -1,0 +1,76 @@
+1. create docker container ? 
+    dockeer run image_name
+
+
+2. check the docker images:
+    docker images
+
+3. check for container : 
+    docker ps     //shows running container
+    docker ps -a  //shows all container including stopped container
+
+4. run ubuntu inside docker: 
+    docker run -it ubuntu   
+    //here 'ubuntu' is terminal and '-it' is interactive terminal 
+    //so if we exec only docker run ubuntu .. it returns nothing it enters to the container and exit immedieately 
+
+5. create docker container with its name 
+    docker run -it --name arpit ubuntu      //here container name is arpit and image name is ubuntu
+
+6. docker run vs start:
+    //docker run is executed while creating new container
+    //docker start is executed to run the existing container: 
+    docker start -ai arpit
+
+7. running container in the background : 
+    //docker call this detatch mode -d
+    docker run -d postgres
+
+8. docker exec :
+    //suppose there's already running detached container and you dont want to stop that instead you want to open terminal in alrady running container
+
+9. create docker in backgroundand then enter in to its terminal
+    docker run -d --name testubuntu ubuntu sleep infinity
+    docker exec -it testubuntu bash  //docker exec takes 2 arg here 2 given and --name is nt req in docker exec 
+
+10. stop the running container
+    dockeer stop container_name
+
+11. docker port mapping 
+    -p machine_port:container_port
+    //Port mapping, -p HOST_PORT:CONTAINER_PORT, Your PostgreSQL server is listening on port 5432 But machine will accesses it through 5433
+
+    LocalMachine
+    localhost:5433
+        │
+        │ Docker forwards traffic
+        ▼
+    Container
+    port 5432
+        │
+        ▼
+    PostgreSQL
+12. volume 
+    -v source_name:destination_path
+    without volume if container deleted then the storage deleted .. so we give the storage for db in docker env
+
+13. create image 
+
+    paradedb/paradedb:=>image name
+    Tags identify image variants/versions.
+    For example, conceptually an image repository might contain:
+    paradedb/paradedb:latest
+    paradedb/paradedb:1.0
+    paradedb/paradedb:1.1
+
+#-------------------------------------------------Docker Execution in our project------------------------------------------------------
+
+1.Create Container:
+
+'docker volume ls' ==> delete everyting inside this 
+then execute ' docker run -d --name sementic-search-db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=sementic_search -p 5433:5432 -v sementic_search_data:/var/lib/postgresql paradedb/paradedb:latest '
+
+2. 
+
+    Therefore, from Python running directly on your Windows machine, you would connect using something like:
+    psycopg.connect(    "host=localhost port=5433 dbname=sementic_search user=postgres password=postgres")

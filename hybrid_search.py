@@ -30,12 +30,14 @@ def hybrid_search(
         fused_results,
         top_k=final_k
     )
+    return final_results
 
 if __name__ == "__main__":
 
     query = "How can approximate indexing speed up vector search?"
 
     results = hybrid_search(query)
+    print(results)
 
     for rank, result in enumerate(results, start=1):
 

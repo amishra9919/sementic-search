@@ -502,50 +502,7 @@ Production readiness additionally concerns things like:
 
 
 ############################################################
-#TODO IN HOME LAPTOP 
 
-in docker learning paste thsi for port mapping
-So:
-Your Windows
-localhost:5433
-       │
-       │ Docker forwards traffic
-       ▼
-Container
-port 5432
-       │
-       ▼
-PostgreSQL
-
-Therefore, from Python running directly on your Windows machine, you would connect using something like:
-psycopg.connect(    "host=localhost port=5433 dbname=sementic_search user=postgres password=postgres")
-
-
--v volume :
--v source:destination
-without volume if container deleted then the storage deleted .. so we give the storage for db in docker env
-
-Imagine you don't use a volume:
-Container
-│
-└── PostgreSQL data
-      ├── tables
-      ├── indexes
-      └── database files
-
-Then you delete the container:
-docker rm semantic-search-db
-
-The container's filesystem gets deleted with it.
-
-create image 
-:
-paradedb/paradedb:=>image name
-Tags identify image variants/versions.
-For example, conceptually an image repository might contain:
-paradedb/paradedb:latest
-paradedb/paradedb:1.0
-paradedb/paradedb:1.1
 
 #------------------------
 EXECution

@@ -13,7 +13,7 @@ with open('data/sample_document.txt', 'r', encoding="utf-8") as file:
     chunks = chunk_text(text, chunk_size=100, overlap=20)
     embedding = model.encode(chunks, batch_size=32)
 
-    with psycopg.connect('dbname=sementic_search user=arpit') as conn:
+    with psycopg.connect('dbname=sementic_search user=postgres password=arpitm11814') as conn:
         register_vector(conn)
         with conn.cursor() as cursor:
             cursor.execute("""
