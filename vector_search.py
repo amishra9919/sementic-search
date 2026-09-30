@@ -35,7 +35,7 @@ def vector_search(query, top_k=5):
                 } 
                 for chunk_id, document_id, content, score in rows
             ]
-print(vector_search('vector search', 3))
+        
             # for chunk_id, document_id, content, distance in rows:
             #     result.append({
             #         'id': chunk_id,

@@ -1,0 +1,30 @@
+A cross-encoder is a model used to score the relevance of a query and document
+together. It is commonly used as a reranking stage after a faster retrieval
+system has already selected a small number of candidate documents.
+
+Embedding-based retrieval normally uses a bi-encoder architecture. The document
+is encoded into an embedding ahead of time, while the user query is independently
+encoded into another embedding. Similarity between the two vectors can then be
+calculated very quickly.
+
+A cross-encoder works differently. Instead of independently encoding the query
+and document, it processes them together as a pair. This allows the model to
+examine interactions between query tokens and document tokens while calculating
+a relevance score.
+
+This generally provides better relevance estimates but is computationally more
+expensive. If a database contains one million documents, running a cross-encoder
+against every document for every query would usually be impractical.
+
+Therefore, cross-encoders are commonly used for reranking. A fast first-stage
+retriever might use BM25, vector similarity, or hybrid search to retrieve perhaps
+20 to 100 candidate documents. The cross-encoder then evaluates only those
+candidates and produces a new ranking.
+
+A typical architecture is:
+
+query -> retrieve candidates -> fuse results -> cross-encoder -> final results
+
+This two-stage design combines efficient retrieval with more accurate relevance
+scoring and is widely used in semantic search and retrieval-augmented generation
+systems.

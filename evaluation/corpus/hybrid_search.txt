@@ -1,0 +1,30 @@
+Hybrid search combines multiple retrieval techniques to improve search quality.
+A common architecture combines lexical retrieval, such as BM25 or PostgreSQL
+full-text search, with semantic retrieval based on vector embeddings.
+
+Lexical search is strong when the query contains exact words, technical terms,
+identifiers, names, or phrases that also occur in relevant documents. Semantic
+search is useful when the query and document express similar meanings using
+different vocabulary.
+
+Consider a query asking how to find documents with similar meaning. A vector
+retriever may recognize that the query is related to semantic search even if
+the exact phrase does not appear in a document. On the other hand, a query
+containing a specific PostgreSQL operator or function may be handled more
+reliably by lexical retrieval.
+
+A hybrid pipeline normally executes both retrieval methods and obtains two
+candidate lists. Because lexical and vector systems produce scores with different
+scales, directly adding their raw scores may be unreliable.
+
+A rank-fusion algorithm such as Reciprocal Rank Fusion can instead combine the
+ordered result lists. The fused candidates may then be passed to a cross-encoder
+reranker for more precise relevance scoring.
+
+A typical retrieval pipeline can therefore be represented as:
+
+query -> lexical retrieval + vector retrieval -> rank fusion -> reranking
+
+Hybrid search attempts to capture both exact keyword relevance and semantic
+similarity, making it useful for document search, RAG systems, enterprise search,
+and question-answering applications.

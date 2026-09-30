@@ -1,0 +1,29 @@
+PostgreSQL includes built-in full-text search capabilities for lexical document
+retrieval. Full-text search allows applications to search natural-language text
+more intelligently than simple SQL patterns such as LIKE '%database%'.
+
+The to_tsvector function converts text into a searchable tsvector. PostgreSQL
+normalizes words into lexemes and can remove common stop words depending on the
+selected language configuration.
+
+A user query can be converted into a tsquery using functions such as
+plainto_tsquery. PostgreSQL then uses the @@ operator to test whether a tsvector
+matches the query.
+
+For example, document content can be converted using an English text-search
+configuration and compared against a query containing terms such as relational
+database. Matching documents can then be ranked using functions such as ts_rank
+or ts_rank_cd.
+
+Full-text search can be accelerated using a GIN index. Instead of repeatedly
+processing and scanning every document, an indexed tsvector column allows
+PostgreSQL to locate documents containing relevant lexemes efficiently.
+
+PostgreSQL full-text search is lexical rather than semantic. It primarily relies
+on relationships between query terms and document terms rather than embedding
+similarity.
+
+When PostgreSQL is also using pgvector, full-text search can form the lexical
+side of a hybrid search system. The application can retrieve candidates from
+both full-text and vector search and combine their rankings before returning the
+final results.

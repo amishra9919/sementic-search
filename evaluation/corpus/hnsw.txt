@@ -1,0 +1,29 @@
+HNSW stands for Hierarchical Navigable Small World. It is an approximate
+nearest-neighbor indexing algorithm commonly used for fast vector similarity
+search.
+
+Without a vector index, finding the nearest embedding may require comparing a
+query vector against every vector in a table. This exact search can become
+expensive when a database contains hundreds of thousands or millions of
+embeddings.
+
+HNSW solves this problem by constructing a graph in which vectors are connected
+to nearby vectors. The graph contains multiple layers. Higher layers contain
+fewer nodes and allow the search algorithm to move quickly across large regions
+of the vector space. Lower layers contain more nodes and provide increasingly
+precise navigation toward the nearest vectors.
+
+The algorithm is approximate, meaning it may occasionally miss the mathematically
+closest vector in exchange for much faster retrieval.
+
+pgvector supports HNSW indexes inside PostgreSQL. When cosine distance is used,
+an index can be created with vector_cosine_ops. Queries using ORDER BY with the
+cosine distance operator can then take advantage of the index.
+
+HNSW usually provides strong query performance and recall, although building the
+index requires additional memory and storage. Parameters controlling graph
+connectivity and search effort allow developers to trade indexing cost and query
+speed against retrieval accuracy.
+
+HNSW is specifically designed for vector similarity search and is different from
+traditional database indexes such as B-tree and GIN indexes.

@@ -460,11 +460,12 @@ docker run -d \
 
 3. once created the container ... inside the db_name=# section there is pg_extension table in which there's extension details are there 
 
-4. if the db_name is not showing on 'docker ps' here sementic-search-db then in that case have to execute it again 
+4. if session is exited then 'check docker ps' if not running session then start the docker container using 'docker start container_name'
+5. if the db_name is not showing on 'docker ps' here sementic-search-db then in that case have to execute it again 
     docker exec -it sementic-search-db bash --> then inside bash execute --> psql -U postgres -d sementic_search   OR
     docker exec -it sementic-search-db psql -U postgres -d sementic_search
 
-5. check with \dx and 
+6. check with \dx and 
 
     CREATE EXTENSION IF NOT EXISTS vector;
     CREATE EXTENSION IF NOT EXISTS pg_search CASCADE;
@@ -531,16 +532,15 @@ Production readiness additionally concerns things like:
 #------------------------
 EXECution
 
-'docker volume ls' ==> delete everyting inside this 
-then execute ' docker run -d --name sementic-search-db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=sementic_search -p 5433:5432 -v sementic_search_data:/var/lib/postgresql paradedb/paradedb:latest '
+mkdir corpus
 
-=>create extension
-CREATE INDEX bm25_test_search_idx
-ON bm25_test
-USING paradedb (
-    id,
-    content
-)
-WITH (
-    key_field = 'id'
-);
+New-Item corpus\pgvector.txt,
+         corpus\hnsw.txt,
+         corpus\bm25.txt,
+         corpus\postgres_fts.txt,
+         corpus\hybrid_search.txt,
+         corpus\rrf.txt,
+         corpus\cross_encoder.txt,
+         corpus\embeddings.txt,
+         corpus\database_indexes.txt,
+         corpus\docker_postgres.txt -ItemType File

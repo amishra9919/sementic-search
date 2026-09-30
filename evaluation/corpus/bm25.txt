@@ -1,0 +1,28 @@
+BM25 is a ranking algorithm used in information retrieval and keyword-based
+search systems. Unlike semantic search, BM25 does not use vector embeddings.
+Instead, it evaluates how strongly the words in a query match words appearing
+inside documents.
+
+An important idea behind BM25 is term frequency. If a query term occurs several
+times in a document, that document may be more relevant. However, repeating the
+same word many times should not increase relevance indefinitely, so BM25 applies
+term-frequency saturation.
+
+BM25 also considers inverse document frequency. A rare term appearing in only a
+few documents usually provides more information than a common term appearing
+almost everywhere. Therefore, rare matching terms generally contribute more to
+the BM25 score.
+
+Document length is another factor. Without normalization, long documents could
+receive high scores simply because they contain more words. BM25 adjusts scores
+according to document length relative to the average document length.
+
+BM25 works particularly well for queries containing exact technical terminology,
+identifiers, product names, error messages, or uncommon keywords. For example,
+a query containing "vector_cosine_ops" may benefit from lexical retrieval because
+that exact token is highly informative.
+
+BM25 does not understand semantic similarity in the same way an embedding model
+does. A document can discuss a concept using different words and receive a poor
+BM25 score. For this reason, modern search systems often combine BM25 with vector
+search to create hybrid retrieval.

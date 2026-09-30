@@ -1,0 +1,29 @@
+Embeddings are numerical vector representations of data. In text search, an
+embedding model converts words, sentences, paragraphs, or documents into arrays
+of floating-point numbers that capture aspects of their semantic meaning.
+
+For example, a sentence-transformer model may convert a paragraph into a vector
+containing 384 dimensions. Documents discussing similar concepts tend to produce
+vectors that are located near each other in the model's embedding space.
+
+Before semantic search can be performed, documents are usually processed and
+their embeddings are generated. These vectors can then be stored in a vector
+database or in PostgreSQL using an extension such as pgvector.
+
+When a user submits a search query, the same embedding model converts the query
+into a vector. The system compares this query embedding with stored document
+embeddings using a distance or similarity metric.
+
+Cosine similarity is commonly used for text embeddings because it measures the
+angle between vectors. Other metrics include Euclidean distance and inner
+product.
+
+Embeddings allow semantic retrieval because exact keyword overlap is not always
+required. A query about "finding text with similar meaning" may retrieve a
+document discussing "semantic document retrieval" even when their wording is
+different.
+
+The quality of semantic search depends heavily on the embedding model, document
+chunking strategy, domain, and retrieval configuration. Embeddings provide the
+foundation for vector search but can also be combined with lexical retrieval in
+hybrid search systems.

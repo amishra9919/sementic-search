@@ -1,0 +1,29 @@
+A database index is a data structure that helps a database locate information
+without scanning every row in a table. Indexes improve query performance but
+require additional storage and create some overhead when data is inserted,
+updated, or deleted.
+
+Different indexes are designed for different types of queries.
+
+B-tree is the standard PostgreSQL index type and works well for equality,
+comparison, sorting, and range queries. It is commonly used for identifiers,
+timestamps, numbers, and other ordered values.
+
+GIN, or Generalized Inverted Index, is useful when one database row contains
+multiple searchable elements. PostgreSQL commonly uses GIN indexes for full-text
+search, arrays, and JSONB data. In text search, a GIN index can efficiently map
+lexemes to the documents containing them.
+
+Vector search requires specialized indexing because high-dimensional vectors
+cannot be searched efficiently using normal B-tree indexes. pgvector provides
+approximate nearest-neighbor indexes such as HNSW and IVFFlat.
+
+HNSW organizes vectors using a multilayer graph so that nearby vectors can be
+found without comparing the query against every stored vector.
+
+Choosing an index depends on the operation being performed. A B-tree index might
+support filtering by document ID or date, a GIN index might support PostgreSQL
+full-text search, and an HNSW index might accelerate semantic vector retrieval.
+
+A production search system may therefore use several indexes on the same table,
+with each index optimized for a different part of the query workload.

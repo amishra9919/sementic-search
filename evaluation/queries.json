@@ -1,0 +1,14 @@
+[
+    {
+        "query": "How can I make approximate vector retrieval faster?",
+        "relevant_chunk_ids": [3]
+    },
+    {
+        "query": "How does keyword relevance ranking work?",
+        "relevant_chunk_ids": [7]
+    },
+    {
+        "query": "How can lexical and semantic search be combined?",
+        "relevant_chunk_ids": [10]
+    }
+]

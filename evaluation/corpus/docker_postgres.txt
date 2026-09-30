@@ -1,0 +1,27 @@
+Docker can be used to run PostgreSQL inside an isolated container instead of
+installing and configuring the database directly on the host operating system.
+This makes development environments easier to reproduce across machines.
+
+A PostgreSQL container is created from a Docker image. Environment variables can
+configure values such as the database user, password, and initial database name.
+
+Port mapping allows applications running on the host computer to communicate
+with PostgreSQL inside the container. For example, mapping host port 5433 to
+container port 5432 means an application can connect to localhost:5433 while
+PostgreSQL continues listening on its normal port inside the container.
+
+Docker volumes are important for database persistence. Containers themselves
+can be removed or recreated, so database files should normally be stored in a
+persistent volume. This allows PostgreSQL data to survive container replacement.
+
+For semantic search projects, a PostgreSQL image can also include extensions.
+An image containing pgvector allows vector columns and similarity search, while
+images such as ParadeDB may include additional search-related PostgreSQL
+extensions.
+
+Developers can inspect running containers with docker ps and start an existing
+stopped container using docker start. Commands can also be executed inside a
+running container using docker exec.
+
+Docker does not replace PostgreSQL. It provides a standardized environment in
+which the PostgreSQL server and its dependencies can run.

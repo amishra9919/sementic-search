@@ -1,0 +1,26 @@
+pgvector is a PostgreSQL extension that adds support for storing and searching
+vector embeddings directly inside a PostgreSQL database. It is commonly used
+when applications need semantic search but also want to keep relational data
+and vector data in the same database.
+
+A vector embedding is an array of numbers representing the semantic meaning of
+some data, such as a sentence, paragraph, image, or product description.
+For example, a sentence-transformer model may generate a 384-dimensional
+embedding for each document.
+
+pgvector provides the vector data type for storing these embeddings. A table
+might contain an id, document content, and an embedding column. Once embeddings
+are stored, PostgreSQL can compare a query embedding against document embeddings.
+
+pgvector supports several distance measures. Cosine distance uses the <=>
+operator, Euclidean distance uses <->, and inner product uses <#>. For semantic
+text search, cosine distance is commonly used because it compares the direction
+of vectors rather than their absolute magnitude.
+
+For small datasets, PostgreSQL can calculate the distance against every vector.
+For larger datasets, pgvector supports approximate nearest-neighbor indexes
+such as HNSW and IVFFlat.
+
+One advantage of pgvector is architectural simplicity. Applications can combine
+vector similarity with normal SQL filters, joins, metadata, and PostgreSQL
+full-text search without maintaining a separate vector database.

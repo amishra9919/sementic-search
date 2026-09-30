@@ -1,0 +1,31 @@
+Reciprocal Rank Fusion, usually abbreviated as RRF, is an algorithm for combining
+multiple ranked result lists. It is useful in hybrid search systems where
+different retrieval methods produce scores that are not directly comparable.
+
+Suppose a semantic vector search returns one ranking while BM25 returns another.
+The cosine similarity score produced by vector retrieval has a different meaning
+and numerical range from a BM25 relevance score. Adding these raw scores directly
+can therefore produce misleading results.
+
+RRF avoids this problem by using the rank position of each document rather than
+its original retrieval score.
+
+A common RRF formula is:
+
+RRF score = 1 / (k + rank)
+
+where rank represents a document's position in a result list and k is a constant
+that reduces the effect of very high-ranking positions.
+
+If a document appears near the top of both lexical and semantic result lists,
+it receives contributions from both lists and obtains a stronger combined score.
+A document appearing in only one list can still be retained, but it may rank
+below documents supported by multiple retrieval methods.
+
+RRF is attractive because it is simple and does not require normalization of
+scores from different retrieval systems.
+
+In a hybrid search pipeline, BM25 and vector search can each retrieve a set of
+candidate documents. RRF combines those candidates into a single ranking, after
+which the highest-ranked documents can be sent to a more expensive cross-encoder
+reranker.
