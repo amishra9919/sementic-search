@@ -26,8 +26,6 @@ def ingest_document(file_path):
         content_hash = hashlib.sha256(text.encode("utf-8")).hexdigest() ## same txt -> same hash
 
         title = os.path.basename(file_path)
-
-        # ingest_directory('evaluation/corpus')
         
         with pool.connection() as conn:
             register_vector(conn)
@@ -36,19 +34,19 @@ def ingest_document(file_path):
                     INSERT INTO documents(title, source, content_hash)
                     VALUES(%s, %s, %s)
                     ON CONFLICT(content_hash) DO NOTHING
-                    RETURNING id;""", (title, file_path, content_hash))
+                    RETURNING id;""", (title, str(file_path), content_hash))
                 ##have created documents_content_hash_idx btree for UNIQUE hash so it will throw err for dup hash .. to prevent --> on conflict used
                 result = cursor.fetchone()
 
-                chunks = chunk_text(text, chunk_size=100, overlap=20)
-                embedding = model.encode(chunks, batch_size=32)
-                
                 if result is None:
                     print(
                         f"Skipping existing document: "
                         f"{file_path}")
                     return
                 
+                chunks = chunk_text(text, chunk_size=100, overlap=20)
+                embedding = model.encode(chunks, batch_size=32)
+
                 document_id = result[0]
                 chunk_rows = []
 
@@ -66,4 +64,6 @@ def ingest_document(file_path):
                 
         print(f"INSERTED INTO DOCUMENT {document_id} "
                 f"WITH {len(chunks)} chunks")
-        
+
+
+ingest_directory('evaluation/corpus')
