@@ -1,14 +1,106 @@
 [
-    {
-        "query": "How can I make approximate vector retrieval faster?",
-        "relevant_chunk_ids": [3]
-    },
-    {
-        "query": "How does keyword relevance ranking work?",
-        "relevant_chunk_ids": [7]
-    },
-    {
-        "query": "How can lexical and semantic search be combined?",
-        "relevant_chunk_ids": [10]
-    }
+  {
+    "query": "How can I make approximate vector retrieval faster?",
+    "relevant_chunk_ids": [4, 5]
+  },
+  {
+    "query": "What is HNSW and how does it speed up vector search?",
+    "relevant_chunk_ids": [4, 5]
+  },
+  {
+    "query": "Why would I use HNSW instead of scanning every vector?",
+    "relevant_chunk_ids": [4]
+  },
+  {
+    "query": "How does keyword relevance ranking work with BM25?",
+    "relevant_chunk_ids": [25, 26]
+  },
+  {
+    "query": "Why are rare search terms more important in BM25?",
+    "relevant_chunk_ids": [26]
+  },
+  {
+    "query": "When is BM25 better than semantic search?",
+    "relevant_chunk_ids": [27]
+  },
+  {
+    "query": "How can I perform lexical text search in PostgreSQL?",
+    "relevant_chunk_ids": [16, 17]
+  },
+  {
+    "query": "How do to_tsvector and tsquery work in PostgreSQL?",
+    "relevant_chunk_ids": [16, 17]
+  },
+  {
+    "query": "Which index should I use for PostgreSQL full-text search?",
+    "relevant_chunk_ids": [18, 23]
+  },
+  {
+    "query": "What are embeddings and how are they used for semantic search?",
+    "relevant_chunk_ids": [10, 11]
+  },
+  {
+    "query": "How can search find documents with similar meaning even when they use different words?",
+    "relevant_chunk_ids": [12]
+  },
+  {
+    "query": "Where can vector embeddings be stored in PostgreSQL?",
+    "relevant_chunk_ids": [11]
+  },
+  {
+    "query": "How can results from lexical search and vector search be combined?",
+    "relevant_chunk_ids": [3, 18]
+  },
+  {
+    "query": "What is Reciprocal Rank Fusion?",
+    "relevant_chunk_ids": [13, 14]
+  },
+  {
+    "query": "How can I combine rankings when BM25 and vector similarity scores have different scales?",
+    "relevant_chunk_ids": [13, 14]
+  },
+  {
+    "query": "Why does RRF use rank positions instead of raw retrieval scores?",
+    "relevant_chunk_ids": [14]
+  },
+  {
+    "query": "What is a cross-encoder used for in a search pipeline?",
+    "relevant_chunk_ids": [7, 9]
+  },
+  {
+    "query": "What is the difference between a bi-encoder and a cross-encoder?",
+    "relevant_chunk_ids": [7, 8]
+  },
+  {
+    "query": "Why should a cross-encoder rerank only a small number of candidates?",
+    "relevant_chunk_ids": [9]
+  },
+  {
+    "query": "What type of database index should I use for different search operations?",
+    "relevant_chunk_ids": [22, 23, 24]
+  },
+  {
+    "query": "What is a GIN index used for?",
+    "relevant_chunk_ids": [23]
+  },
+  {
+    "query": "Why do vector searches need specialized indexes instead of B-tree?",
+    "relevant_chunk_ids": [24]
+  },
+  {
+    "query": "How can I run PostgreSQL in an isolated environment?",
+    "relevant_chunk_ids": [19]
+  },
+  {
+    "query": "How does Docker port mapping work with PostgreSQL?",
+    "relevant_chunk_ids": [20]
+  },
+  {
+    "query": "How can PostgreSQL data survive when a Docker container is recreated?",
+    "relevant_chunk_ids": [20]
+  },
+  {
+    "query": "How can I start and access an existing PostgreSQL Docker container?",
+    "relevant_chunk_ids": [21]
+  }
 ]
